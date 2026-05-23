@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-  ],
+, "src/utils/parseVideos.js", "src/app/page.jsx"  ],
   "exclude": ["node_modules"]
 }
