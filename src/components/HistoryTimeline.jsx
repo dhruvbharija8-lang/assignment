@@ -33,6 +33,15 @@ export default function HistoryTimeline({ clips, currentTimestamp, onSeek }) {
     const CLICK_THRESHOLD_PX = 10; // only trigger if click within 10px of a clip bar
     if (nearestClip && minPxDiff <= CLICK_THRESHOLD_PX) {
       onSeek(nearestClip.timestamp);
+    } else {
+      // Show a simple popup/toast when no clip is nearby
+      if (typeof window !== 'undefined') {
+        try {
+          alert('No clip nearby');
+        } catch (e) {
+          // ignore
+        }
+      }
     }
   };
 
