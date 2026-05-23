@@ -15,17 +15,25 @@ export default function HistoryTimeline({ clips, currentTimestamp, onSeek }) {
   // User ne timeline pe click kiya
   const handleClick = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const clickRatio = (e.clientX - rect.left) / rect.width;
-    const clickedTime = dayStartMs + clickRatio * dayDurationMs;
+    const clickX = e.clientX - rect.left;
 
-    // Clicked time ke sabse paas wali clip dhundo
-    const nearestClip = clips.reduce((prev, curr) => {
-      const prevDiff = Math.abs(prev.timestamp - clickedTime);
-      const currDiff = Math.abs(curr.timestamp - clickedTime);
-      return currDiff < prevDiff ? curr : prev;
+    // Find nearest clip by pixel distance (so clicking empty space does nothing)
+    let nearestClip = null;
+    let minPxDiff = Infinity;
+
+    clips.forEach((clip) => {
+      const clipX = ((clip.timestamp - dayStartMs) / dayDurationMs) * rect.width;
+      const pxDiff = Math.abs(clipX - clickX);
+      if (pxDiff < minPxDiff) {
+        minPxDiff = pxDiff;
+        nearestClip = clip;
+      }
     });
 
-    onSeek(nearestClip.timestamp); // Parent ko batao
+    const CLICK_THRESHOLD_PX = 10; // only trigger if click within 10px of a clip bar
+    if (nearestClip && minPxDiff <= CLICK_THRESHOLD_PX) {
+      onSeek(nearestClip.timestamp);
+    }
   };
 
   return (
